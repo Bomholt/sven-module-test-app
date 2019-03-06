@@ -1,3 +1,7 @@
-<p>
-  product-list works!
-</p>
+<ul>
+  <li class="text" *ngFor="let product of products | async">
+    {{product.name}} -- ID: {{product.id}}
+    <button (click)="deleteProduct(product)">DEL</button>
+  </li>
+</ul>
+<h1>Virker det???</h1>
