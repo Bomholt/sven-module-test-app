@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {Product} from './product.model';
-import {map, map, switchMap} from 'rxjs/operators';
-import {promise} from 'selenium-webdriver';
+import {map, switchMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +10,14 @@ import {promise} from 'selenium-webdriver';
 export class ProductService {
 
   constructor(private db: AngularFirestore) { }
+
+  addProduct(product: Product): Observable<Product> {
+    return from( this.db.collection('products').add({name: product.name}))
+      .pipe(map(proRef => {
+        product.id = proRef.id;
+        return product;
+      }));
+  }
 
   getProducts(): Observable<Product[]> {
     return this.db.collection<Product>('products')
@@ -40,7 +47,6 @@ export class ProductService {
             }));
         }
     }));
-
     /*
     return Observable.create(ob => {
       this.db.doc<Product>('products/' + id).delete()
