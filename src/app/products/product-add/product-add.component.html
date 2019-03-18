@@ -15,3 +15,19 @@
   <button type="button" (click)="goBack()">Cancel</button>
 </form>
 
+<div>
+<image-cropper
+  style="height: 512px; width: 512px; float: left"
+  [imageChangedEvent]="imageChangedEvent"
+  [aspectRatio]="1 / 1"
+  [maintainAspectRatio]="true"
+  [resizeToWidth]="128"
+  [onlyScaleDown]="true"
+  [cropperMinWidth]="128"
+  format="png"
+  (imageCropped)="imageCropped($event)"
+></image-cropper>
+  <div *ngIf="croppedImage">
+  <img [src]="croppedImage" style="width: 250px">
+  </div>
+</div>

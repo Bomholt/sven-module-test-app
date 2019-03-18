@@ -3,13 +3,25 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {Product} from './product.model';
 import {map, switchMap} from 'rxjs/operators';
+import {ImageMetaData} from '../../files/shared/image-meta-data';
+import {FileServiceService} from '../../files/shared/file-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
 
-  constructor(private db: AngularFirestore) { }
+  constructor(private db: AngularFirestore,
+              private fs: FileServiceService) { }
+
+  addProductWithImage(product: Product, imageMeta: ImageMetaData): Observable<Product> {
+    return this.fs.uploadImage(imageMeta).pipe(
+      switchMap(metadata => {
+        product.pictureId = metadata.id;
+        return this.addProduct(product);
+      })
+    );
+  }
 
   addProduct(product: Product): Observable<Product> {
     return from( this.db.collection('products')
@@ -41,7 +53,7 @@ export class ProductService {
   deleteProduct(id: string): Observable<Product> {
     return this.db.doc<Product>('products/' + id)
       .get().pipe(switchMap(productDocument => {
-        if (!productDocument || !productDocument.data()){
+        if (!productDocument || !productDocument.data()) {
           throw new Error('Product was not found');
         } else {
           return from(this.db.doc<Product>('products/' + id)
