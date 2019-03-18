@@ -1,16 +1,9 @@
+<button routerLink="add">add product</button>
 <ul>
   <li class="text" *ngFor="let product of products | async">
+    <img style="width: 24px; height: 24px" [src]="product.url">
     {{product.name}} -- ID: {{product.id}}
     <button (click)="deleteProduct(product)">DEL</button>
   </li>
 </ul>
-<h1>New Product</h1>
 
-<form [formGroup]="productFormGroup" (submit)="addProduct()">
-  <label>
-    Name
-    <input [type]="text" formControlName="name">
-  </label>
-  <button type="submit">Submit</button>
-</form>
-<input type="file" (change)="uploadFile($event)">

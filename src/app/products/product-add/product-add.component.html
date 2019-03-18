@@ -1,0 +1,17 @@
+<h1>New Product</h1>
+
+<form [formGroup]="productFormGroup" (submit)="addProduct()">
+  <label>
+    Name
+    <input [type]="text" formControlName="name">
+  </label><br><br>
+
+  <label>
+    Picture
+  <input type="file" (change)="uploadFile($event)" accept="image/*">
+  </label><br><br>
+
+  <button type="submit" >Submit</button>
+  <button type="button" (click)="goBack()">Cancel</button>
+</form>
+

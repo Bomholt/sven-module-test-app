@@ -3,6 +3,8 @@ import {Observable} from 'rxjs';
 import {ProductService} from '../shared/product.service';
 import {Product} from '../shared/product.model';
 import {FormControl, FormGroup} from '@angular/forms';
+import {FileServiceService} from '../../files/shared/file-service.service';
+import {switchMap, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-list',
@@ -11,15 +13,24 @@ import {FormControl, FormGroup} from '@angular/forms';
 })
 export class ProductListComponent implements OnInit {
 products: Observable<Product[]>;
-  productFormGroup: FormGroup;
-  constructor(private ps: ProductService) {
-    this.productFormGroup = new FormGroup({
-      name: new FormControl('')
-    });
-  }
+
+  constructor(private ps: ProductService,
+              private fs: FileServiceService) {}
 
   ngOnInit() {
-    this.products = this.ps.getProducts();
+    this.products = this.ps.getProducts()
+      .pipe(
+        tap(products => {
+          products.forEach(product => {
+            if (product.pictureId) {
+            this.fs.getFileURL(product.pictureId)
+              .subscribe(url => {
+                product.url = url;
+              });
+            }
+          });
+        })
+      );
   }
 
   deleteProduct(pro: Product) {
@@ -31,17 +42,6 @@ products: Observable<Product[]>;
       });
   }
 
-  addProduct() {
-    const np = this.productFormGroup.value;
-    this.ps.addProduct(np)
-      .subscribe(pro => {
-        window.alert('Product was added with ID: ' + pro.id + ' Name: ' + pro.name);
-      });
-  }
 
-  uploadFile(event) {
-    const file = event.target.files[0];
-    debugger;
-  }
 
 }

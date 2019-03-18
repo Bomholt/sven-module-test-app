@@ -12,7 +12,12 @@ export class ProductService {
   constructor(private db: AngularFirestore) { }
 
   addProduct(product: Product): Observable<Product> {
-    return from( this.db.collection('products').add({name: product.name}))
+    return from( this.db.collection('products')
+      .add(
+        {
+          name: product.name,
+          pictureId: product.pictureId
+        }))
       .pipe(map(proRef => {
         product.id = proRef.id;
         return product;
@@ -27,7 +32,8 @@ export class ProductService {
           const data = action.payload.doc.data() as Product;
           return {
             id: action.payload.doc.id,
-            name: data.name};
+            name: data.name,
+            pictureId: data.pictureId};
         });
       }));
   }
